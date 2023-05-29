@@ -1,4 +1,6 @@
 import requests
+import cv2
+import numpy as np
 import tensorflow as tf
 from PIL import Image
 from io import BytesIO
@@ -19,7 +21,8 @@ def read_image(image_encode):
 
 
 def preprocess(image: Image.Image):
-    image = image.resize(input_shape)
+    image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    image = cv2.resize(image, input_shape)
     image = tf.keras.utils.img_to_array(image)
     image = image / 255.0
     image = expand_dims(image, 0)

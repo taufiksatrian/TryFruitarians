@@ -26,7 +26,7 @@ model_dir = "model.h5"
 with tf.keras.utils.custom_object_scope({'KerasLayer': KerasLayer}):
     model = tf.keras.models.load_model(model_dir)
 
-class_predictions = array([
+class_names = array([
     'fresh_apple',
     'fresh_banana',
     'fresh_guava',
@@ -64,12 +64,12 @@ async def api_prediction_v3(image_link: str = "", file: bytes = File(...)):
         pred = model.predict(prep_image)
 
     score = tf.nn.softmax(pred[0])
-    class_prediction = class_predictions[argmax(score)]
-    model_score = round(max(score) * 100, 2)
+    class_prediction = class_names[argmax(score)]
+    pred_score = float(round(max(score) * 100, 2))
 
     return {
-        "model-prediction-link": class_prediction,
-        "model-prediction-confidence-score-link": model_score,
+        "model-prediction": class_prediction,
+        "model-score": pred_score,
     }
 
 if __name__ == "__main__":

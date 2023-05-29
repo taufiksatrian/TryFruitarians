@@ -39,7 +39,7 @@ def read_image_from_base64(image_data):
 
 
 def preprocess(image: Image.Image):
-    image = image.resize(224, 224)
+    image = image.resize((224, 224), resample=Image.BILINEAR)
     image = tf.keras.utils.img_to_array(image)
     image = image / 255.0
     image = tf.expand_dims(image, 0)
@@ -49,6 +49,27 @@ def preprocess(image: Image.Image):
 @app.get("/")
 async def index():
     return {"Welcome to the Fruitarians API for freshness!"}
+
+
+@app.post("/api/prediction/v3/testing/")
+async def api_prediction_v3(image_data: UploadFile = File(...)):
+    if not image_data:
+        return {"message": "No image provided"}
+
+    image = await image_data.read()
+    image = Image.open(BytesIO(image))
+
+    prep_image = preprocess(image)
+    pred = model.predict(prep_image)
+
+    score = tf.nn.softmax(pred[0])
+    class_prediction = class_predictions[argmax(score)]
+    pred_score = float(pred[0][pred.argmax()])
+
+    return {
+        "model-prediction": class_prediction,
+        "model-prediction-confidence-score": pred_score,
+    }
 
 
 @app.post("/api/prediction/v3/")
@@ -62,11 +83,11 @@ async def api_prediction_v3(image_data: str):
 
     score = tf.nn.softmax(pred[0])
     class_prediction = class_predictions[argmax(score)]
-    model_score = round(max(score) * 100, 2)
+    model_score = float(round(max(score) * 100, 2))
 
     return {
-        "model-prediction-link": class_prediction,
-        "model-prediction-confidence-score-link": model_score,
+        "model-prediction": class_prediction,
+        "model-prediction-confidence-score": model_score,
     }
 
 if __name__ == "__main__":
