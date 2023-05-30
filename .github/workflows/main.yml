@@ -6,7 +6,7 @@ on:
       - "main"
 
 env:
-  TAGS: ${{ github.sha }}
+  TAGS: v1.0.9
   DOCKER_REPOSITORY: taufiksatrianugraha/fruitarians-model
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GCP_SERVICE_KEY: ${{ secrets.GCP_SERVICE_KEY }}
