@@ -20,12 +20,12 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
 
-      -
-        name: Configure Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          service_account_key: ${{ secrets.GCP_SERVICE_KEY }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      # -
+      #   name: Configure Google Cloud SDK
+      #   uses: google-github-actions/setup-gcloud@v1
+      #   with:
+      #     service_account_key: ${{ secrets.GCP_SERVICE_KEY }}
+      #     project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       -
         name: Configure Docker 
@@ -48,18 +48,23 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_REPOSITORY }}:v1.0.9
 
       -
-        name: Authenticate with Google Cloud
+        id: 'auth'
+        name: Authenticate to Google Cloud 
         uses: 'google-github-actions/auth@v1'
         with:
-          workload_identity_provider: 'principalSet://iam.googleapis.com/projects/1099470473096/locations/global/workloadIdentityPools/githubactions/*'
-          service_account: 'cloud-machine-learning-admin@capstone-project-387215.iam.gserviceaccount.com'
+          workload_identity_provider: 'https://iam.googleapis.com/projects/1099470473096/locations/global/workloadIdentityPools/githubactions/providers/github'
+          service_account: 'github-actions@capstone-project-387215.iam.gserviceaccount.com'
     
+      -
+        name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v1'
+
       -
         name: Deploy to Google Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           image: "gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ env.DOCKER_REPOSITORY }}:v1.0.9"
-          credentials: ${{ secrets.GCP_SERVICE_KEY }}
+          credentials: 'MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDr3cqAlVQpSWyOJYwBoadkKmleLiTnwg2JQ2VmNVzx/cSwe+klPf7sIcj7qT5O9Mn/DIXj/UI1VmwXdhYnwyoit6HfIUGhAYRWNQd/kr3VGaaxO54Nsth4ViAUyxROlycb3iiadzVwSig5n4UqX9H7BcZeyKhRgU2OEBicwdd4dmceIKw4XUiaFBUW476ZoYhbOl7nhlHxk7oaGQD49VOHzw0f0gZiHQ3n3ZAtNBhKJaED8W4UtlazyE5h73VSyi+ZwX90nbUg1bHX0wcOtXa3fnp3F9vUeq2vU3eZBXWS3EXINi+jynxam8OviPgkekQZg54qFha9ApWC2XLNTI/hAgMBAAECggEAIxLopYVPLhKKj3q63pU80JLT91rSRxpeq+43OmMuDpgncv0CFvUontGJUw8AQnp5PTGOCXCkM01GJpj7Q29sqRv4eLc3zKrulGkvU8Os8e7uEEXmw2+4a/CWtbDbNLKacLTxAcM/UZLdd3Amu73i+jqKHJcnHHOnZjwzhL/4fCOKLMBoSORgoKn91M3jsz989/3KQaefZqIIs3HyVBCfITyI+UXkPP2j+M8OIuY2LdoEMGVFZmeabwJ6yz1Zlunmxu2rdNYZ9akLvHdeMD9p1rg+VAKlva1iQKDuvvmkSR3cPi16udhU4/BfKJJOeGLNO4qfgw5vWoMdZ3sIvWKQZwKBgQD4uhJlCsscPBEGrm2Zzsy2tEeEs+EnBfCY8XSXo2qaewcPpoJaWuG/uhH+xpq2MYXgSKAhE/VugsO4Y+i33PldRYEGUcEww55cM2PuNmScxXobaXW4jH+urWDx8px1Aclspk+9FfUynUtBSkHOeHudQVY5Bt2IWdRVcWzFYBHyLwKBgQDyw3Ki0jEO2nt1Tqj1x/nq5ZDnUwawKS+k73cDIthNRhujApS7TnZEHo8ImG8/FB0lBvwyNFTr2lw8bIjGGHvdOM14+njVVHtR+kAjUrYdQUe8VtuHKKOJcUS+8bLgKF0IwZtmm0E+23NkM5DRk0TWkLsPU6KeJmIKdvDeOPxq7wKBgQDCU4Y5oWQtDBT1VmRVDghNGq7h1DQt6+sdY1CHhOquBT7wEFS5yVWlGPgkSQDpJeoF4FgTX+eaTtohfxV8SU4efEYhLNC2i693M8N4gtC612Ledde+ty6ux9D9V2K73AiGNa4I+lXXFKOOQDkH2oQhycFWzrFYbW6Czxp/Xt7GiwKBgAQ+urByMH1sAKCqgXXay1n6LbB92S4XakfeEByz7Uhco3sUPnmQA61pQ2MJF1jpByFwn9RY6es95EMCOtoL746MwbsN1jMUyRtD3v8/IQQd8h0u/6O7aDCtFGCqZVBaJFZU3FzM9jUdLUVhSXUAuEFwQnUgJ0XQsgIw1kFsia1tAoGBAJ4w/6XdtuUD9lh5M3RrYbq88JqF+9fkHsqOm9BIu0DAcpRVDBuvn43gI0vnG82VeQovYVLqlSQ/A+Qb57qDEEDkbC2r31Y2Duunt+ue8lxAvlFFvrzhDcpj25gofA6dkU1XLTt/ocAISFTw00CzXQspEIr74D0UYLL6luGvEeub'
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           region: asia-southeast2
           service: fruitarians-model-cloud-ci-cd
