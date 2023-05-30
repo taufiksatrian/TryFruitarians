@@ -51,7 +51,8 @@ jobs:
         name: Authenticate with Google Cloud
         uses: 'google-github-actions/auth@v1'
         with:
-          run: gcloud auth login
+          workload_identity_provider: 'principalSet://iam.googleapis.com/projects/1099470473096/locations/global/workloadIdentityPools/githubactions/*'
+          service_account: 'cloud-machine-learning-admin@capstone-project-387215.iam.gserviceaccount.com'
     
       -
         name: Deploy to Google Cloud Run
