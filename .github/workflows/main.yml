@@ -7,7 +7,7 @@ on:
 
 env:
   TAGS: v1.0.9
-  DOCKER_REPOSITORY: taufiksatrianugraha/fruitarians-model
+  DOCKER_REPOSITORY: fruitarians-model
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GCP_SERVICE_KEY: ${{ secrets.GCP_SERVICE_KEY }}
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
