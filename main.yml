@@ -1,4 +1,4 @@
-name: CI/CD Model Classification Freshness
+name: End to End Pipeline Model Classification Freshness
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 env:
   TAGS: ${{ github.sha }}
-  DOCKER_REPOSITORY: taufiksatrianugraha/fruitarians-model
+  DOCKER_REPOSITORY: taufiksatrianugraha/fruitarians-model-fastapi
   GCP_PROJECT_ID: your-project-id
   GCP_SERVICE_KEY: ${{ secrets.GCP_SERVICE_KEY }}
 
@@ -48,6 +48,5 @@ jobs:
           image: "gcr.io/${{ env.GCP_PROJECT_ID }}/${{ env.DOCKER_REPOSITORY }}:${{ env.TAGS }}"
           service_account_key: ${{ secrets.GCP_SERVICE_KEY }}
           project_id: ${{ env.GCP_PROJECT_ID }}
-          region: asia-southeast2
+          region: us-central1
           service: fruitarians-model
-
