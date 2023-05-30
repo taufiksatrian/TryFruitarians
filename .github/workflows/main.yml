@@ -48,7 +48,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v0.2.0
         with:
           image: "gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ env.DOCKER_REPOSITORY }}:${{ env.TAGS }}"
-          service_account_key: ${{ secrets.GCP_SERVICE_KEY }}
+          credentials: ${{ secrets.GCP_SERVICE_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           region: asia-southeast2
           service: fruitarians-model-cloud-ci-cd
